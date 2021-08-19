@@ -1,3 +1,3 @@
-P2op
-image/*.jpg
-csv/*.csv
+P2op/*
+image/*
+csv/*
