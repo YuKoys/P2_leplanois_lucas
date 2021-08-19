@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import csv
 import urllib.request
 
-def find_all_url(beginning_url):
+def find_all_url(beginning_url):#get_books_urls
   reques = requests.get(beginning_url)
   res = []
 
@@ -40,7 +40,7 @@ def find_all_url(beginning_url):
 
 
 
-def info_book(url):
+def get_book_data(url):#get_book_data
   res = requests.get(url)
   if res.ok:
     soup = BeautifulSoup(res.text, 'html.parser')
@@ -51,7 +51,6 @@ def info_book(url):
     tdlist.pop(4)
     tdlist.pop(5)
     td = []
-
 
     for i in range(len(tdlist)):
       if i == 2 or i == 3:
@@ -73,10 +72,10 @@ def info_book(url):
 
 
 
-#res = info_book("http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")
+#res = get_book_data("http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html")
 
 #print(res)
-def url_categorie(beginning_url):
+def get_category_urls(beginning_url):#get_category_urls
   reque = requests.get(beginning_url)
   res = []
   if reque.ok:
@@ -100,19 +99,19 @@ def url_categorie(beginning_url):
 
 
 def call_all_function(beginning_url):
-  list_url_categorie = url_categorie(beginning_url)
+  list_get_category_urls = get_category_urls(beginning_url)
   name_csv_file = ""
   first_line = ("product_page_url","universal_ product_code (upc)", "title", "price_including_tax", 
   "price_excluding_tax", "number_available", "product_description", "category", "review_rating", "image_url")
-  for i in range(len(list_url_categorie)):
+  for i in range(len(list_get_category_urls)):
   #for i in range(1):
-    list_url_books_in_categorie = find_all_url(list_url_categorie[i])
+    list_url_books_in_categorie = find_all_url(list_get_category_urls[i])
     if i > 7: 
-      name_csv_file = list_url_categorie[i][:(-13 -1)]
+      name_csv_file = list_get_category_urls[i][:(-13 -1)]
       name_csv_file = name_csv_file[51:]
       name2 = "csv/" + str(name_csv_file) + ".csv"
     else:
-      name_csv_file = list_url_categorie[i][:-13]
+      name_csv_file = list_get_category_urls[i][:-13]
       name_csv_file = name_csv_file[51:]
       name2 = "csv/" + str(name_csv_file) + ".csv"
     
@@ -122,7 +121,7 @@ def call_all_function(beginning_url):
     writer = csv.writer(f)
     writer.writerow(first_line)
     for j in list_url_books_in_categorie:
-      info_book_variable = info_book(j)  
+      info_book_variable = get_book_data(j)  
       img = "image/" + info_book_variable[9][44:]
       urllib.request.urlretrieve(info_book_variable[9], img)
       writer.writerow(info_book_variable)
@@ -133,14 +132,4 @@ call_all_function('http://books.toscrape.com')
     
 
 
-
-#f = open("crashtest.csv", "w", newline="")
-
-
-#tup1 = ("tezjiojio",15)
-#writer = csv.writer(f)
-#writer.writerow(tup1)
-
-
-#f.close()
 
